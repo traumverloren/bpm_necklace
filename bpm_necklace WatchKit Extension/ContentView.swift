@@ -8,9 +8,48 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var bleManager = BLEManager()
+    
     var body: some View {
-        Text("Hello, World!")
-            .padding()
+        VStack {
+            Text("LED Necklace")
+            List(bleManager.peripherals) { peripheral in
+                HStack {
+                    Text(peripheral.name)
+                    Spacer()
+                    Text(String(peripheral.rssi))
+                    
+                }
+            }.frame(height:40)
+            
+            // Status goes here
+            if bleManager.isSwitchedOn {
+                Text("Bluetooth is on")
+                    .foregroundColor(.green)
+                    .font(.system(size: 14))
+                    .padding()
+            }
+            else {
+                Text("Bluetooth is NOT on")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+                    .padding(10)
+            }
+            
+            HStack {
+                Button(action: {
+                    self.bleManager.startScanning()
+                }) {
+                    Text("Start")
+                }
+                Button(action: {
+                    self.bleManager.stopScanning()
+                }) {
+                    Text("Stop")
+                }
+            }.padding()
+        }
+        
     }
 }
 
